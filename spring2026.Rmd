@@ -1,0 +1,271 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(lme4)
+library(readr)
+big_lm <- read_csv("C:/Users/kayla/Downloads/biglinreg.csv")
+
+library(ggplot2)
+
+ggplt <- ggplot(data = big_lm, aes(x=average_plantcover,y=seedbank_density,shape=season), labs(main = "Seedbank Density Increases with BFT Cover Across All Sites and Between Seasons",
+x = "BFT Aboveground Cover (%)",
+y = "Seedbank Density (seeds/m2)"))+
+         geom_point()+
+         theme_classic()
+
+ggplt
+
+# Plotting multiple Regression Lines
+ggplt+geom_smooth(method=lm,se=FALSE,fullrange=TRUE,
+                  aes(color=season))
+``` 
+```{r}
+library(lme4)
+library(readr)
+big_lm <- read_csv("C:/Users/kayla/Downloads/biglinreg.csv")
+
+# Fit the Generalized Linear Mixed Model
+# The formula syntax is: response ~ fixed_effects + (random_effects | grouping_factor)
+# The 'family = binomial' specifies a logistic regression with a logit link function
+model_big <- lm(
+  seedbank_density ~ average_plantcover + season + site,
+  data = big_lm,
+)
+
+# View the model summary
+summary(model_big)
+
+library(car)
+type3_anovabig <- Anova(model_big, type = "III")
+print(type3_anovabig)
+```
+```{r}
+library(lme4)
+library(readr)
+big_lm <- read_csv("C:/Users/kayla/Downloads/biglinreg.csv")
+
+# Fit the Generalized Linear Mixed Model
+# The formula syntax is: response ~ fixed_effects + (random_effects | grouping_factor)
+# The 'family = binomial' specifies a logistic regression with a logit link function
+model_big2 <- lm(
+  average_plantcover ~ season + site,
+  data = big_lm,
+)
+
+# View the model summary
+summary(model_big2)
+
+library(car)
+type3_anovabig2 <- Anova(model_big2, type = "III")
+print(type3_anovabig2)
+```
+
+```{r}
+library(readr)
+Linreg_spring26 <- read_csv("C:/Users/kayla/Downloads/Spring26data/spring26linreg.csv")
+
+coefficient_s26 <- cor.test(Linreg_spring26$average_plantcover, Linreg_spring26$seedbank_density)
+
+coefficient_s26$estimate
+
+model_s26 <- lm(seedbank_density ~ average_plantcover, data = Linreg_spring26)
+
+summary(model_s26)
+```
+
+
+```{r}
+library(readr)
+Linreg_spring26 <- read_csv("C:/Users/kayla/Downloads/Spring26data/spring26linreg.csv")
+
+x <- Linreg_spring26$average_plantcover
+y <- Linreg_spring26$seedbank_density
+# Plot with main and axis titles
+# Change point shape (pch = 19) and remove frame.
+p<- plot(x, y, main = "Site Wide BFT Cover vs Seedbank Density Spring 2026",
+    xlab = "BFT Cover (%)", ylab = "Seedbank Density (seeds/m2)",
+     pch = 19, frame = FALSE)
+abline(lm(y ~ -1 + x, data = Linreg_spring26), col = "blue")
+```
+```{r}
+library(readr)
+Linregsample_spring26 <- read_csv("C:/Users/kayla/Downloads/Spring26data/spring26samplelevellinreg.csv")
+
+x <- Linregsample_spring26$BFT_percent
+y <- Linregsample_spring26$Seedbank_Density
+# Plot with main and axis titles
+# Change point shape (pch = 19) and remove frame.
+p<- plot(x, y, main = "Sample Level BFT Cover vs Seedbank Density Spring 2026",
+    xlab = "BFT Cover (%)", ylab = "Seedbank Density (seeds/m2)",
+     pch = 19, frame = FALSE)
+abline(lm(y ~ -1 + x, data = Linregsample_spring26), col = "blue")
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+library(readr)
+Linregsample_spring26 <- read_csv("C:/Users/kayla/Downloads/Spring26data/spring26samplelevellinreg.csv")
+
+coefficient_ss26 <- cor.test(Linregsample_spring26$BFT_percent, Linregsample_spring26$Seedbank_Density)
+
+coefficient_ss26$estimate
+
+model_ss26 <- lm(Seedbank_Density ~ BFT_percent, data =Linregsample_spring26)
+
+summary(model_ss26)
+```
+```{r}
+library(readr)
+Springvspring <- read_csv("C:/Users/kayla/Downloads/Spring25v26boxplots.csv")
+# library
+library(ggplot2)
+ 
+ggplot(data = Springvspring, aes(x=Invasion, y=Seedbank, fill=Season)) + 
+    geom_boxplot(aes(x=Invasion, y=Seedbank, fill=Season)) + scale_color_hue() + theme_light()
+```
+```{r}
+library(readr)
+sp26boxplot <- read_csv("C:/Users/kayla/Downloads/spring26boxplot.csv")
+
+
+boxplot(sp26boxplot$No_invasion_seedbank_density, sp26boxplot$Low_invasion_seedbank_density, sp26boxplot$High_invasion_seedbank_density,
+main = "Seedbank Density Across Invasion Levels Spring 2026",
+xlab = "Invasion Level",
+ylab = "Seedbank Density (seeds/m2)",
+names = c("No Invasion", "Low Invasion","High Invasion"),
+col = c("yellow", "green", "blue"),
+border = "black",
+Vertical = TRUE,
+notch = FALSE
+)
+```
+```{r}
+
+library(readr)
+spboxplot <- read_csv("C:/Users/kayla/Downloads/Spring26data/boxplot_sp2526.csv")
+
+
+boxplot(spboxplot$No_invasion_seedbank_density, spboxplot$Low_invasion_seedbank_density, spboxplot$High_invasion_seedbank_density,
+main = "BFT Seedbank Density Across Invasion Levels Spring",
+xlab = "Invasion Level",
+ylab = "Seedbank Density (seeds/m2)",
+names = c("No Invasion", "Low Invasion","High Invasion"),
+col = c("yellow", "green", "blue"),
+border = "black",
+Vertical = TRUE,
+notch = FALSE
+)
+
+```
+```{r}
+
+library(readr)
+violin_allspring <- read_csv("C:/Users/kayla/Downloads/Spring26data/violin_springalldata.csv")
+
+library(ggplot2)
+
+library(scales)
+# Basic violin plot
+sp_violin <- ggplot(data = violin_allspring, aes(x = Invasion, y = Seedbank_Density)) +
+   geom_violin(fill = "white", alpha = 0.5, adjust = 2, scale = "width") + geom_jitter(width = 0.08, alpha = 0.5, color = "#3a86d4")
+
+
+sp_violin
+
+```
+
+```{r}
+library(readr)
+sp26boxplot <- read_csv("C:/Users/kayla/Downloads/spring26boxplot.csv")
+
+
+boxplot(sp26boxplot$Low_invasion_seedbank_density,
+main = "Low Invasion Seedbank Density",
+xlab = "Invasion Level",
+ylab = "Seedbank Density (seeds/m^2)",
+names = "Low Invasion",
+col = "blue",
+border = "green",
+Vertical = TRUE,
+notch = TRUE
+)
+```
+```{r}
+library(lme4)
+library(readr)
+spvs_lm <- read_csv("C:/Users/kayla/Downloads/Spring26data/lme_sp25v26.csv")
+
+# Fit the Generalized Linear Mixed Model
+# The formula syntax is: response ~ fixed_effects + (random_effects | grouping_factor)
+# The 'family = binomial' specifies a logistic regression with a logit link function
+model_spvs <- lm(
+ seedbank_density ~ average_plantcover + year,
+  data = spvs_lm,
+)
+
+# View the model summary
+summary(model_spvs)
+
+library(car)
+type3anova_spvs <- Anova(model_spvs, type = "III")
+print(type3anova_spvs)
+```
+```{r}
+library(lme4)
+library(readr)
+spvsinvasion_lm <- read_csv("C:/Users/kayla/Downloads/Spring26data/lme_sp25v26.csv")
+
+# Fit the Generalized Linear Mixed Model
+# The formula syntax is: response ~ fixed_effects + (random_effects | grouping_factor)
+# The 'family = binomial' specifies a logistic regression with a logit link function
+model_spvsinvasion <- lm(
+ seedbank_density ~ invasion_level + year,
+  data = spvsinvasion_lm,
+)
+
+# View the model summary
+summary(model_spvsinvasion)
+
+library(car)
+type3anova_spvsinvasion <- Anova(model_spvsinvasion, type = "III")
+print(type3anova_spvsinvasion)
+```
+```{r}
+#spring 25 vs 26 does not have a significant difference overall between seasons, so I can combine the data into one 
+library(readr)
+lowttest_spvs <- read_csv("C:/Users/kayla/Downloads/Spring26data/sp25v26_lowttest.csv")
+t.test(lowttest_spvs$low_sp25, lowttest_spvs$low_sp26, alternative = "greater")
+wilcox.test(lowttest_spvs$low_sp25, lowttest_spvs$low_sp26, alternative = "greater")
+
+#low invasion sites vary from one another between spring 25 and 26
+```
+```{r}
+library(lme4)
+library(readr)
+spvshi_lm <- read_csv("C:/Users/kayla/Downloads/Spring26data/sp25v26_hisites.csv")
+
+# Fit the Generalized Linear Mixed Model
+# The formula syntax is: response ~ fixed_effects + (random_effects | grouping_factor)
+# The 'family = binomial' specifies a logistic regression with a logit link function
+model_spvshi <- lm(
+ seedbank_density ~ site + year,
+  data = spvshi_lm,
+)
+
+# View the model summary
+summary(model_spvshi)
+
+library(car)
+type3anova_spvshi <- Anova(model_spvshi, type = "III")
+print(type3anova_spvshi)
+
+#high invasion plot by plot did not change significantly between spring 25 vs 26
+```
+
+
